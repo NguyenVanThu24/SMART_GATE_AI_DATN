@@ -1,0 +1,63 @@
+services:
+  db:
+    image: mysql:8.0
+    container_name: smartgate_db
+    command: --default-time-zone=+07:00 --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: smart_gate
+      TZ: Asia/Ho_Chi_Minh
+    ports: ["3307:3306"]
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-proot"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  phpmyadmin:
+    image: phpmyadmin:latest
+    container_name: smartgate_pma
+    depends_on: [db]
+    environment:
+      PMA_HOST: db
+      PMA_USER: root
+      PMA_PASSWORD: root
+      UPLOAD_LIMIT: 64M
+    ports: ["8081:80"]
+
+  server:
+    build: ./backend/server
+    container_name: smartgate_server
+    depends_on:
+      db: { condition: service_healthy }
+    environment:
+      PORT: 3000
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_USER: root
+      DB_PASSWORD: root
+      DB_NAME: smart_gate
+      JWT_SECRET: doi_secret_nay_khi_trien_khai
+      AI_API_KEY: smartgate-ai-key
+      MIN_CONFIDENCE: 80
+      BARRIER_AUTO_CLOSE_SEC: 8
+      CLIENT_ORIGIN: "*"
+    ports: ["3000:3000"]
+    volumes: ["./backend/server/src:/app/src"]
+
+  frontend:
+    build: ./frontend
+    container_name: smartgate_frontend
+    depends_on: [server]
+    environment:
+      VITE_API_URL: http://localhost:3000
+    ports: ["5173:5173"]
+    volumes: 
+      - ./frontend/src:/app/src
+
+
+volumes:
+  db_data:
