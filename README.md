@@ -72,11 +72,13 @@
 ## 🎬 VIDEO DEMO
 
 Mình đã kiểm tra kết quả của bạn.
-Thiết bị	Địa chỉ IP
-Windows	192.168.1.233
-Camera EZVIZ	192.168.1.2
-Ubuntu WSL2	172.27.2.42
-Docker	172.18.0.1, 172.19.0.1
+
+| Thiết bị	| Địa chỉ IP |
+|---|---|
+| Windows	| 192.168.1.233 |
+| Camera EZVIZ	| 192.168.1.2 |
+| Ubuntu WSL2	| 172.27.2.42 |
+| Docker	| 172.18.0.1, 172.19.0.1 |
 ---
 
 # <p align="center">***THE END***</p>
