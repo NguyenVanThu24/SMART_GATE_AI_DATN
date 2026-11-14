@@ -71,16 +71,12 @@
 
 ## 🎬 VIDEO DEMO
 
-<p align="center">
-  <a href="https://youtu.be/SSky2Bkc2q0">
-    <img src="https://img.youtube.com/vi/SSky2Bkc2q0/hqdefault.jpg" alt="Video Demo" width="500"/>
-  </a>
-</p>
-
-<p align="center">
-  ▶️ <a href="https://youtu.be/SSky2Bkc2q0"><b>XEM VIDEO DEMO TRÊN YOUTUBE</b></a>
-</p>
-
+Mình đã kiểm tra kết quả của bạn.
+Thiết bị	Địa chỉ IP
+Windows	192.168.1.233
+Camera EZVIZ	192.168.1.2
+Ubuntu WSL2	172.27.2.42
+Docker	172.18.0.1, 172.19.0.1
 ---
 
 # <p align="center">***THE END***</p>
