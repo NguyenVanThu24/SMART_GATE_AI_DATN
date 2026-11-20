@@ -67,3 +67,7 @@ backend/ai-core/data/
 *.avi
 *.mov
 *.mkv
+
+# Smart Gate AI environment
+.smartgate_ai.env
+.smartgate_ai_rtsp.env

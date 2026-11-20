@@ -43,6 +43,7 @@ services:
       JWT_SECRET: doi_secret_nay_khi_trien_khai
       AI_API_KEY: smartgate-ai-key
       MIN_CONFIDENCE: 80
+      AI_TEST_MODE: "true"
       BARRIER_AUTO_CLOSE_SEC: 8
       CLIENT_ORIGIN: "*"
     ports: ["3000:3000"]
@@ -58,6 +59,21 @@ services:
     volumes: 
       - ./frontend/src:/app/src
 
+  # Nhan dang xe + bien so + OCR (CLI tuong tac). Khong chay cung "up".
+  # Chay: docker compose run --rm ai
+  ai:
+    build: ./ai
+    container_name: smartgate_ai
+    profiles: ["ai"]
+    stdin_open: true
+    tty: true
+    env_file: ./backend/ai-core/.env     # <-- thêm dòng này
+    environment:
+      OUTPUT_DIR: /data
+      AI_API_KEY: smartgate-ai-key
+      MIN_CONFIDENCE: 80
+    volumes:
+      - ./data:/data
 
 volumes:
   db_data:

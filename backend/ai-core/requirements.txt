@@ -1,8 +1,8 @@
-ultralytics
-opencv-python
-pillow
-numpy
-matplotlib
-fast-plate-ocr
-onnxruntime
-ipykernel
+# Chay tren may ca nhan (VSCode) hoac Docker. Python 3.10+
+ultralytics>=8.3
+opencv-python>=4.8
+numpy>=1.24
+pillow>=10.0
+fast-plate-ocr>=1.0
+onnxruntime>=1.16
+flask

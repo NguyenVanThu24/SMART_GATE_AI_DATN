@@ -31,10 +31,21 @@ exports.process = async ({ gate_id, plate, confidence = 100, image_path = null }
   const [r] = await db.query(
     'INSERT INTO access_logs (gate_id,plate_number,confidence,direction,vehicle_id,visitor_id,result,reason,image_path) VALUES (?,?,?,?,?,?,?,?,?)',
     [gate_id, String(plate).toUpperCase(), confidence, direction, vehicle_id, visitor_id, result, reason, image_path]);
-  if (result === 'allowed') {
+  
+  // Che do thu nghiem AI: luu du lieu nhung khong mo barrier
+  const aiTestMode = process.env.AI_TEST_MODE !== 'false';
+
+  if (result === 'allowed' && !aiTestMode) {
     await barrier.set(gate_id, 'open', 'auto', null, io);
-    if (visitor_id && direction === 'out') await db.query("UPDATE visitors SET status='done' WHERE id=?", [visitor_id]);
+
+    if (visitor_id && direction === 'out') {
+      await db.query(
+        "UPDATE visitors SET status='done' WHERE id=?",
+        [visitor_id]
+      );
+    }
   }
+
   const [[row]] = await db.query(`${LOG_SQL} WHERE a.id=?`, [r.insertId]);
   io.emit('plate:detected', row);
   return row;

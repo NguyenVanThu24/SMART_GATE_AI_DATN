@@ -26,7 +26,30 @@ export default function GateMonitorPage() {
       <div className="top"><h2>Giám sát cổng</h2></div>
       <div className="grid g2">
         <div className="card"><h3>Nhận diện mới nhất</h3>
-          <div className="cam"><span className="live">● LIVE</span>Khung hình camera (tích hợp AI sau)</div>
+          <div className="cam" style={{ position: 'relative', overflow: 'hidden' }}>
+            <img
+              src={`http://${window.location.hostname}:5000/video_feed`}
+              alt="Camera EZVIZ H1c - Smart Gate AI"
+              style={{
+                width: '100%',
+                height: '100%',
+                objectFit: 'contain',
+                display: 'block'
+              }}
+            />
+            <span
+              className="live"
+              style={{
+                position: 'absolute',
+                top: 10,
+                left: 10,
+                zIndex: 2
+              }}
+            >
+              ● LIVE
+            </span>
+          </div>
+
           {last ? (<div style={{ marginTop: 12 }}>
             <p><PlateBadge>{last.plate_number}</PlateBadge> &nbsp;<StatusBadge kind={RESULTS[last.result][0]}>{RESULTS[last.result][1]}</StatusBadge></p>
             <p>{last.owner || 'Không xác định'} — {last.reason} ({last.gate_name})</p>
