@@ -12,6 +12,7 @@ from urllib.request import urlretrieve
 import re
 import cv2
 import numpy as np
+import onnxruntime as ort
 from fast_plate_ocr import LicensePlateRecognizer
 
 from config import (NGUONG_OCR, OCR_TOI_DA_MOI_XE, SO_LAN_XAC_NHAN, OCR_INTERVAL,
@@ -29,16 +30,27 @@ ocr_vn = None
 
 def khoi_tao_ocr():
     global ocr_vn
+
     if ocr_vn is None:
         for f in (FILE_OCR_MODEL, FILE_OCR_CONFIG):
             if not Path(f).is_file():
                 urlretrieve(OCR_BASE_URL + f, f)
+
+        # Gioi han luong xu ly OCR
+        options = ort.SessionOptions()
+        options.intra_op_num_threads = 2
+        options.inter_op_num_threads = 1
+        options.execution_mode = ort.ExecutionMode.ORT_SEQUENTIAL
+
         ocr_vn = LicensePlateRecognizer(
             onnx_model_path=FILE_OCR_MODEL,
             plate_config_path=FILE_OCR_CONFIG,
             device=OCR_DEVICE,
+            sess_options=options,
         )
-        print("Đã khởi tạo ocr_vn")
+
+        print("Da khoi tao OCR - ONNX 2 threads")
+
     return ocr_vn
 
 

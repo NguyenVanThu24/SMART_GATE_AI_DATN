@@ -2,6 +2,9 @@ import time
 import threading
 
 import cv2
+
+cv2.setNumThreads(4)
+
 from flask import Flask, Response, jsonify
 
 from config import (RTSP_URL, JPEG_QUALITY, WEB_WIDTH, WEB_HEIGHT, STREAM_INTERVAL,
@@ -33,6 +36,7 @@ def doc_camera():
             continue
 
         print("Da ket noi camera")
+        moc_web = 0.0
 
         try:
             while True:
@@ -42,8 +46,16 @@ def doc_camera():
                     break
 
                 with frame_lock:
-                    latest_raw = frame.copy()
+                    latest_raw = frame
                     ket_qua = list(latest_results)
+
+                # Van doc RTSP lien tuc, nhung chi ma hoa JPEG toi da 15 FPS
+                bay_gio = time.monotonic()
+
+                if bay_gio - moc_web < 1.0 / 15:
+                    continue
+
+                moc_web = bay_gio
 
                 frame_web = cv2.resize(frame, (WEB_WIDTH, WEB_HEIGHT))
                 sx = frame_web.shape[1] / frame.shape[1]
