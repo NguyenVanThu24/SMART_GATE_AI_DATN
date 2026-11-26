@@ -9,6 +9,7 @@ const G = require('../controllers/gateController');
 r.post('/auth/login', wrap(A.login));
 r.post('/ai/detect', aiKey, wrap(G.detect)); // Python AI gọi vào đây
 
+const E = require('../controllers/evidenceController');
 r.use(auth);
 r.get('/auth/me', (req, res) => res.json(req.user));
 
@@ -26,6 +27,7 @@ mount('/accounts', R.accounts, ['admin']);
 
 r.get('/dashboard', wrap(G.dashboard));
 r.get('/history', wrap(G.history));
+r.get('/history/:id/evidence/:type', wrap(E.getImage));
 r.put('/history/:id/resolve', wrap(G.resolve));
 r.get('/gates', wrap(G.list));
 r.post('/gates/:id/barrier', wrap(G.barrier));

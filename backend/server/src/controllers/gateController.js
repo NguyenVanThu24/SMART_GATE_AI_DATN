@@ -1,6 +1,7 @@
 const db = require('../config/db');
 const barrier = require('../services/barrierService');
 const detection = require('../services/detectionService');
+const evidenceLog = require('../services/evidenceLogService');
 const { LOG_SQL } = require('../services/queries');
 
 exports.list = async (req, res) => res.json((await db.query('SELECT * FROM gates ORDER BY id'))[0]);
@@ -12,8 +13,22 @@ exports.barrier = async (req, res) => {
 };
 exports.simulate = async (req, res) => // giả lập AI nhận diện (để test khi chưa có AI)
   res.json(await detection.process({ gate_id: req.params.id, plate: req.body.plate, confidence: req.body.confidence ?? 97 }, req.app.get('io')));
-exports.detect = async (req, res) => // endpoint cho Python AI
-  res.json(await detection.process(req.body, req.app.get('io')));
+// Endpoint cho Python AI
+exports.detect = async (req, res) => {
+  const io = req.app.get('io');
+
+  // Xu ly nhan dien va chong trung truoc
+  const row = await detection.process(req.body, io);
+
+  // Luu anh bang chung va cap nhat MySQL
+  const updated = await evidenceLog.attachEvidence(
+    row,
+    req.body,
+    io
+  );
+
+  return res.json(updated);
+};
 
 exports.history = async (req, res) => {
   const { from, to, result, q, limit = 200 } = req.query; const w = []; const p = [];

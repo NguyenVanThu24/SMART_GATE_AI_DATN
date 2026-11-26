@@ -119,7 +119,7 @@ def xu_ly_ai():
             # Moi bien so chi gui API 1 lan, ngay luc duoc chot
             for item in moi_chot:
                 print("CHOT BIEN SO:", item["plate"], "| OCR:", item["ocr_score"])
-                gui_bien_so(item)
+                gui_bien_so(item, frame)
         except Exception as e:
             print("Loi xu ly AI:", e)
 

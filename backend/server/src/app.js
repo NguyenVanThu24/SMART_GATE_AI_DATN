@@ -3,6 +3,7 @@ const express = require('express'), cors = require('cors'), http = require('http
 const { Server } = require('socket.io');
 const bcrypt = require('bcryptjs');
 const db = require('./config/db');
+const driveSyncWorker = require('./services/driveSyncWorker');
 const { notFound, errorHandler } = require('./middlewares/error');
 
 const app = express();
@@ -24,5 +25,11 @@ io.on('connection', (s) => console.log('[socket] client', s.id));
     const [r] = await db.query("UPDATE accounts SET password_hash=? WHERE password_hash='RESET'", [hash]);
     if (r.affectedRows) console.log(`[seed] đã đặt mật khẩu mặc định Admin@123 cho ${r.affectedRows} tài khoản`);
   } catch (e) { console.error('[seed] bỏ qua:', e.message); }
-  server.listen(process.env.PORT || 3000, () => console.log('Smart Gate API chạy tại cổng', process.env.PORT || 3000));
+  server.listen(process.env.PORT || 3000, () => {
+    console.log('Smart Gate API chạy tại cổng', process.env.PORT || 3000);
+
+    driveSyncWorker.start().catch(error => {
+      console.error('[drive] Worker startup failed:', error.message);
+    });
+  });
 })();
