@@ -71,3 +71,12 @@ backend/ai-core/data/
 # Smart Gate AI environment
 .smartgate_ai.env
 .smartgate_ai_rtsp.env
+# ==============================
+# BACKUPS - SECURITY
+# ==============================
+backups/
+*.bak
+*.backup
+smart_gate_backup_*.sql
+.smartgate_ai_container_backup.json
+.smartgate_ai.env.backup

@@ -88,6 +88,8 @@ CREATE TABLE access_logs (
   image_path VARCHAR(255),
   operator_id INT NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  event_id VARCHAR(36) DEFAULT NULL,
+  UNIQUE KEY uq_access_logs_event_id (event_id),
   INDEX idx_plate (plate_number),
   INDEX idx_time (created_at),
   FOREIGN KEY (gate_id) REFERENCES gates(id),
