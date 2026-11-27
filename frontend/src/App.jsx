@@ -1,10 +1,13 @@
+import * as React from 'react';
+import './styles/loading.css';
+
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { useAuth } from './context/AuthContext';
 import MainLayout from './components/layout/MainLayout';
-import LoginPage from './pages/LoginPage';
-import DashboardPage from './pages/DashboardPage';
-import GateMonitorPage from './pages/GateMonitorPage';
-import HistoryPage from './pages/HistoryPage';
+
+
+
+
 import ResourcePage from './components/common/ResourcePage';
 import PlateBadge from './components/common/PlateBadge';
 import StatusBadge from './components/common/StatusBadge';
@@ -22,11 +25,11 @@ const Vehicles = () => (
       { key: 'valid_to', label: 'Hết hạn', render: (r) => r.valid_to || '—' },
     ]}
     fields={[
-      { name: 'plate_number', label: 'Biển số', required: true },
+      { name: 'plate_number', label: 'Biển số', required: true, maxLength: 15, placeholder: 'Ví dụ: 99A-123.45' },
       { name: 'vehicle_type', label: 'Loại xe', type: 'select', options: Object.entries(VEHICLE_TYPES).map(([value, label]) => ({ value, label })), default: 'car' },
-      { name: 'brand', label: 'Hãng xe' }, { name: 'color', label: 'Màu sắc' },
-      { name: 'employee_id', label: 'Chủ xe (nhân viên)', type: 'select', optionsFrom: '/employees', optLabel: 'full_name', allowEmpty: true },
-      { name: 'is_allowed', label: 'Quyền mở cổng', type: 'select', options: [{ value: 1, label: 'Được phép' }, { value: 0, label: 'Khóa' }], default: 1 },
+      { name: 'brand', label: 'Hãng xe', maxLength: 50, placeholder: 'Nhập hoặc chọn hãng xe', suggestions: ['Honda', 'Toyota', 'Hyundai', 'Kia', 'Ford', 'Mazda', 'VinFast', 'Yamaha', 'Suzuki', 'Mitsubishi'] }, { name: 'color', label: 'Màu sắc', maxLength: 30, placeholder: 'Nhập hoặc chọn màu', suggestions: ['Trắng', 'Đen', 'Bạc', 'Xám', 'Đỏ', 'Xanh', 'Vàng', 'Nâu'] },
+      { name: 'employee_id', label: 'Chủ phương tiện (nhân viên)', type: 'select', optionsFrom: '/employees', optLabel: 'full_name', allowEmpty: true },
+      { name: 'is_allowed', label: 'Quyền mở cổng', type: 'select', options: [{ value: 1, label: 'Được phép' }, { value: 0, label: 'Khóa' }], default: 0 },
       { name: 'valid_from', label: 'Hiệu lực từ', type: 'date' }, { name: 'valid_to', label: 'Hiệu lực đến', type: 'date' },
     ]} />
 );
@@ -42,7 +45,7 @@ const Employees = () => (
       { name: 'employee_code', label: 'Mã nhân viên', required: true }, { name: 'full_name', label: 'Họ tên', required: true },
       { name: 'phone', label: 'Số điện thoại' }, { name: 'email', label: 'Email' },
       { name: 'department_id', label: 'Phòng ban', type: 'select', optionsFrom: '/departments', optLabel: 'name', allowEmpty: true },
-      { name: 'position', label: 'Chức vụ' },
+      { name: 'position', label: 'Chức vụ', maxLength: 100, suggestions: ['Nhân viên', 'Kỹ sư', 'Kỹ thuật viên', 'Trưởng phòng', 'Quản lý', 'Bảo vệ', 'Giám đốc', 'Chuyên viên'] },
       { name: 'status', label: 'Trạng thái', type: 'select', options: [{ value: 'active', label: 'Hoạt động' }, { value: 'inactive', label: 'Ngừng' }], default: 'active' },
     ]} />
 );
@@ -60,26 +63,16 @@ const Visitors = () => (
       { name: 'full_name', label: 'Họ tên khách', required: true }, { name: 'id_number', label: 'CCCD' }, { name: 'phone', label: 'SĐT' },
       { name: 'plate_number', label: 'Biển số xe' },
       { name: 'host_employee_id', label: 'Người tiếp', type: 'select', optionsFrom: '/employees', optLabel: 'full_name', allowEmpty: true },
-      { name: 'purpose', label: 'Mục đích' }, { name: 'visit_date', label: 'Ngày đến', type: 'date', required: true },
+      { name: 'purpose', label: 'Mục đích', suggestions: ['Họp đối tác', 'Giao hàng', 'Phỏng vấn', 'Bảo trì thiết bị', 'Liên hệ công việc', 'Nộp hồ sơ', 'Thăm quan'] }, { name: 'visit_date', label: 'Ngày đến', type: 'date', required: true },
       { name: 'time_from', label: 'Từ giờ', type: 'time' }, { name: 'time_to', label: 'Đến giờ', type: 'time' },
       { name: 'status', label: 'Trạng thái', type: 'select', default: 'pending', options: Object.entries(VS).map(([value, v]) => ({ value, label: v[1] })) },
     ]} />
 );
-const Accounts = () => (
-  <ResourcePage title="Quản lý tài khoản" endpoint="/accounts" searchHint="Tìm tài khoản..."
-    columns={[
-      { key: 'username', label: 'Tài khoản' }, { key: 'full_name', label: 'Họ tên' },
-      { key: 'role', label: 'Vai trò', render: (r) => ROLES[r.role] },
-      { key: 'last_login', label: 'Đăng nhập cuối', render: (r) => fmtDate(r.last_login) },
-      { key: 'is_active', label: 'Trạng thái', render: (r) => <StatusBadge kind={r.is_active ? 'ok' : 'er'}>{r.is_active ? 'Hoạt động' : 'Khóa'}</StatusBadge> },
-    ]}
-    fields={[
-      { name: 'username', label: 'Tên đăng nhập', required: true }, { name: 'full_name', label: 'Họ tên', required: true },
-      { name: 'password', label: 'Mật khẩu (để trống nếu không đổi)', type: 'password' },
-      { name: 'role', label: 'Vai trò', type: 'select', default: 'guard', options: Object.entries(ROLES).map(([value, label]) => ({ value, label })) },
-      { name: 'is_active', label: 'Trạng thái', type: 'select', default: 1, options: [{ value: 1, label: 'Hoạt động' }, { value: 0, label: 'Khóa' }] },
-    ]} />
-);
+const AccountsPage = React.lazy(() => import('./pages/AccountsPage'));
+const LoginPage = React.lazy(() => import('./pages/LoginPage'));
+const DashboardPage = React.lazy(() => import('./pages/DashboardPage'));
+const GateMonitorPage = React.lazy(() => import('./pages/GateMonitorPage'));
+const HistoryPage = React.lazy(() => import('./pages/HistoryPage'));
 
 function Protected({ children, roles }) {
   const { user } = useAuth();
@@ -89,18 +82,26 @@ function Protected({ children, roles }) {
 }
 export default function App() {
   return (
-    <Routes>
+    <React.Suspense fallback={
+        <div className="sg-page-loading" role="status">
+          <span className="sg-loading-spinner" />
+          <strong>Đang tải dữ liệu...</strong>
+          <small>SMART GATE AI</small>
+        </div>
+      }>
+      <Routes>
       <Route path="/login" element={<LoginPage />} />
       <Route element={<Protected><MainLayout /></Protected>}>
         <Route index element={<DashboardPage />} />
         <Route path="gate" element={<GateMonitorPage />} />
-        <Route path="vehicles" element={<Vehicles />} />
-        <Route path="employees" element={<Employees />} />
+        <Route path="vehicles" element={<Protected roles={['admin', 'manager']}><Vehicles /></Protected>} />
+        <Route path="employees" element={<Protected roles={['admin', 'manager']}><Employees /></Protected>} />
         <Route path="visitors" element={<Visitors />} />
         <Route path="history" element={<HistoryPage />} />
-        <Route path="accounts" element={<Protected roles={['admin']}><Accounts /></Protected>} />
+        <Route path="accounts" element={<Protected roles={['admin']}><AccountsPage /></Protected>} />
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
+      </React.Suspense>
   );
 }

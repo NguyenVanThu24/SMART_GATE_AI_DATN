@@ -191,3 +191,14 @@ exports.sendCommand = async (gateId, action) => {
     });
   });
 };
+
+exports.getHealth = (gateId = 1) => {
+  const connected = Boolean(client?.connected && ready);
+  return {
+    connected,
+    device: !connected ? 'unknown'
+      : availability.has(Number(gateId))
+        ? (availability.get(Number(gateId)) ? 'online' : 'offline')
+        : 'unknown'
+  };
+};

@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 900">
+  <defs>
+    <linearGradient id="bg" x2="1" y2="1">
+      <stop stop-color="#0f172a"/>
+      <stop offset="1" stop-color="#1d4ed8"/>
+    </linearGradient>
+    <linearGradient id="road" x2="0" y2="1">
+      <stop stop-color="#334155"/>
+      <stop offset="1" stop-color="#0f172a"/>
+    </linearGradient>
+    <pattern id="grid" width="50" height="50" patternUnits="userSpaceOnUse">
+      <path d="M50 0H0V50" fill="none" stroke="#60a5fa" stroke-opacity=".09"/>
+    </pattern>
+  </defs>
+  <rect width="1000" height="900" fill="url(#bg)"/>
+  <rect width="1000" height="900" fill="url(#grid)"/>
+  <g fill="#172b49" stroke="#3b82f6" stroke-opacity=".3">
+    <rect x="80" y="170" width="190" height="340" rx="5"/>
+    <rect x="290" y="100" width="230" height="410" rx="5"/>
+    <rect x="550" y="210" width="180" height="300" rx="5"/>
+    <rect x="750" y="150" width="180" height="360" rx="5"/>
+  </g>
+  <path d="M340 470H670L1000 900H0Z" fill="url(#road)"/>
+  <path d="M505 520V900" stroke="#94a3b8" stroke-width="5" stroke-dasharray="28 35" opacity=".6"/>
+  <g stroke="#64748b" stroke-width="13" fill="none">
+    <path d="M140 650V350H830V650"/>
+  </g>
+  <rect x="140" y="320" width="690" height="55" rx="7" fill="#1e293b" stroke="#60a5fa"/>
+  <text x="485" y="354" text-anchor="middle" fill="#93c5fd" font-size="23" font-family="Arial" letter-spacing="5">SMART ACCESS CONTROL</text>
+  <g transform="translate(390 515)">
+    <path d="M0 90L22 24Q30 0 58 0H165Q195 0 205 24L230 90V155H0Z" fill="#cbd5e1" stroke="#60a5fa" stroke-width="3"/>
+    <path d="M34 25H192L209 73H18Z" fill="#1e293b"/>
+    <rect x="8" y="90" width="48" height="19" rx="5" fill="#f8fafc"/>
+    <rect x="174" y="90" width="48" height="19" rx="5" fill="#f8fafc"/>
+    <rect x="78" y="119" width="74" height="25" rx="3" fill="#f8fafc"/>
+    <rect x="12" y="149" width="34" height="23" rx="5" fill="#0f172a"/>
+    <rect x="184" y="149" width="34" height="23" rx="5" fill="#0f172a"/>
+    <rect x="-25" y="-25" width="280" height="215" rx="8" fill="none" stroke="#34d399" stroke-width="3" stroke-dasharray="18 8"/>
+    <rect x="67" y="110" width="96" height="43" fill="none" stroke="#34d399" stroke-width="3"/>
+    <text x="-24" y="-40" fill="#6ee7b7" font-family="Arial" font-size="17">AI VEHICLE DETECTION</text>
+  </g>
+  <rect x="755" y="560" width="55" height="130" rx="8" fill="#334155" stroke="#94a3b8"/>
+  <path d="M782 570L610 430" stroke="#f8fafc" stroke-width="16" stroke-linecap="round"/>
+  <path d="M782 570L610 430" stroke="#ef4444" stroke-width="16" stroke-dasharray="27 27"/>
+  <g transform="translate(185 390)">
+    <path d="M0 0H85L105 20L85 40H0Z" fill="#e2e8f0"/>
+    <circle cx="82" cy="20" r="13" fill="#0f172a" stroke="#60a5fa" stroke-width="4"/>
+    <path d="M82 42L210 245L350 150Z" fill="#60a5fa" opacity=".1"/>
+  </g>
+</svg>

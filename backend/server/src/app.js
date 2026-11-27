@@ -19,6 +19,7 @@ app.use('/api', require('./routes'));
 app.use(notFound);
 app.use(errorHandler);
 
+require('./middlewares/socketAuth')(io);
 io.on('connection', (s) => console.log('[socket] client', s.id));
 
 (async () => {
