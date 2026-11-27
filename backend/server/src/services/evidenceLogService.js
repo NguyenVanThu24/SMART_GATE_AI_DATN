@@ -58,7 +58,13 @@ exports.attachEvidence = async (row, payload, io) => {
        SET image_path = ?,
            plate_image_path = ?,
            drive_sync_status = 'pending',
-           drive_sync_error = NULL
+           drive_sync_error = NULL,
+           telegram_next_retry_at = CASE
+             WHEN telegram_status = 'pending'
+               AND telegram_attempts = 0
+             THEN NOW()
+             ELSE telegram_next_retry_at
+           END
        WHERE id = ?
          AND event_id = ?
          AND drive_sync_status = 'not_required'`,

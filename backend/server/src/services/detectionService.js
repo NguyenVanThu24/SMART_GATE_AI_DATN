@@ -132,8 +132,12 @@ exports.process = async (
       `INSERT INTO access_logs
        (gate_id, plate_number, confidence, direction,
         vehicle_id, visitor_id, result, reason,
-        image_path, event_id)
-       VALUES (?,?,?,?,?,?,?,?,?,?)`,
+        image_path, event_id,
+        telegram_status, telegram_next_retry_at)
+       VALUES (?,?,?,?,?,?,?,?,?,?,?,
+         CASE WHEN ? = 'pending'
+           THEN DATE_ADD(NOW(), INTERVAL 30 SECOND)
+           ELSE NULL END)`,
       [
         gate_id,
         String(plate).toUpperCase(),
@@ -144,7 +148,11 @@ exports.process = async (
         result,
         reason,
         image_path,
-        event_id
+        event_id,
+        result === 'denied' && event_id
+          ? 'pending' : 'not_required',
+        result === 'denied' && event_id
+          ? 'pending' : 'not_required'
       ]
     );
 

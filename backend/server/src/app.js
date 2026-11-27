@@ -4,6 +4,7 @@ const { Server } = require('socket.io');
 const bcrypt = require('bcryptjs');
 const db = require('./config/db');
 const driveSyncWorker = require('./services/driveSyncWorker');
+const telegramAlertWorker = require('./services/telegramAlertWorker');
 const { notFound, errorHandler } = require('./middlewares/error');
 
 const app = express();
@@ -27,6 +28,10 @@ io.on('connection', (s) => console.log('[socket] client', s.id));
   } catch (e) { console.error('[seed] bỏ qua:', e.message); }
   server.listen(process.env.PORT || 3000, () => {
     console.log('Smart Gate API chạy tại cổng', process.env.PORT || 3000);
+
+    telegramAlertWorker.start().catch(() => {
+      console.error('[telegram] Worker startup failed');
+    });
 
     driveSyncWorker.start().catch(error => {
       console.error('[drive] Worker startup failed:', error.message);

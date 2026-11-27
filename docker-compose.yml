@@ -50,6 +50,8 @@ services:
     volumes:
       - ./backend/server/src:/app/src
       - evidence_data:/app/storage/evidence
+      - ${HOME}/SMART_GATE_SECRETS/telegram/bot_token:/run/secrets/telegram/bot_token:ro
+      - ${HOME}/SMART_GATE_SECRETS/telegram/chat_id:/run/secrets/telegram/chat_id:ro
       - ${HOME}/SMART_GATE_SECRETS/google_drive/token.json:/run/secrets/google_drive/token.json:ro
       - ${HOME}/SMART_GATE_SECRETS/google_drive/drive_config.json:/run/secrets/google_drive/drive_config.json:ro
 
