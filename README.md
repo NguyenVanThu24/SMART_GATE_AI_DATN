@@ -28,7 +28,7 @@
 | 👨‍💻 **Sinh viên thực hiện** | Nguyễn Văn Thứ |
 | 🆔 **MSSV** | K225480106062 |
 | 🏷️ **Lớp** | K58KTP |
-| 📅 **Deadline** | .../06/2026 |
+| 📅 **Deadline** | .../12/2026 |
 
 ---
 
@@ -68,6 +68,15 @@
 | 🔧 Git & GitHub | Quản lý mã nguồn |
 
 ---
+## Kết quả đạt được
+
+<img width="1917" height="1020" alt="image" src="https://github.com/user-attachments/assets/7e980304-74f4-4c85-9baf-8e06e37724cd" />
+
+<img width="960" height="1020" alt="Ảnh chụp màn hình 2026-11-26 144538" src="https://github.com/user-attachments/assets/fe0ce744-fb17-4b9a-9b2f-37898fb6a963" />
+
+<img width="1920" height="1020" alt="Ảnh chụp màn hình 2026-11-26 150410" src="https://github.com/user-attachments/assets/7da69281-5cc3-4555-ac76-9e2e406dda11" />
+
+<img width="1920" height="1020" alt="Ảnh chụp màn hình 2026-11-27 085354" src="https://github.com/user-attachments/assets/9c4a6288-e6f7-4457-9e35-8b532bc5efd8" />
 
 ## 🎬 VIDEO DEMO
 
