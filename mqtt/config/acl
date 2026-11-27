@@ -1,0 +1,11 @@
+user smartgate_backend
+topic readwrite smartgate/gates/+/command
+topic read smartgate/gates/+/status
+topic read smartgate/gates/+/availability
+topic read smartgate/gates/+/sensor
+
+user smartgate_esp32_gate1
+topic read smartgate/gates/1/command
+topic write smartgate/gates/1/status
+topic write smartgate/gates/1/availability
+topic write smartgate/gates/1/sensor

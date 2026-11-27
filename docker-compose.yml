@@ -1,4 +1,18 @@
 services:
+
+  mqtt:
+    image: eclipse-mosquitto:2
+    container_name: smartgate_mqtt
+    restart: unless-stopped
+    ports:
+      - "1883:1883"
+    volumes:
+      - ./mqtt/config/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
+      - ${HOME}/SMART_GATE_SECRETS/mqtt/acl:/mosquitto/config/acl:ro
+      - ${HOME}/SMART_GATE_SECRETS/mqtt/passwords:/mosquitto/config/passwords:ro
+      - smartgate_mqtt_data:/mosquitto/data
+
+
   db:
     image: mysql:8.0
     container_name: smartgate_db
@@ -45,9 +59,13 @@ services:
       MIN_CONFIDENCE: 80
       AI_TEST_MODE: "true"
       BARRIER_AUTO_CLOSE_SEC: 8
+      HARDWARE_MODE: mqtt
+      MQTT_GATE_ID: 1
+      MQTT_URL: mqtt://smartgate_mqtt:1883
       CLIENT_ORIGIN: "*"
     ports: ["3000:3000"]
     volumes:
+      - ${HOME}/SMART_GATE_SECRETS/mqtt/smartgate_backend.password:/run/secrets/mqtt/backend_password:ro
       - ./backend/server/src:/app/src
       - evidence_data:/app/storage/evidence
       - ${HOME}/SMART_GATE_SECRETS/telegram/bot_token:/run/secrets/telegram/bot_token:ro
@@ -82,5 +100,10 @@ services:
       - ./data:/data
 
 volumes:
+
+  smartgate_mqtt_data:
+    external: true
+    name: smartgate_mqtt_data
+
   db_data:
   evidence_data:

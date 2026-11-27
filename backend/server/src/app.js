@@ -3,6 +3,7 @@ const express = require('express'), cors = require('cors'), http = require('http
 const { Server } = require('socket.io');
 const bcrypt = require('bcryptjs');
 const db = require('./config/db');
+const mqttService = require('./services/mqttService');
 const driveSyncWorker = require('./services/driveSyncWorker');
 const telegramAlertWorker = require('./services/telegramAlertWorker');
 const { notFound, errorHandler } = require('./middlewares/error');
@@ -28,6 +29,15 @@ io.on('connection', (s) => console.log('[socket] client', s.id));
   } catch (e) { console.error('[seed] bỏ qua:', e.message); }
   server.listen(process.env.PORT || 3000, () => {
     console.log('Smart Gate API chạy tại cổng', process.env.PORT || 3000);
+
+
+    if (process.env.HARDWARE_MODE === 'mqtt') {
+      try {
+        mqttService.start();
+      } catch (error) {
+        console.error('[MQTT] Startup failed:', error.message);
+      }
+    }
 
     telegramAlertWorker.start().catch(() => {
       console.error('[telegram] Worker startup failed');
