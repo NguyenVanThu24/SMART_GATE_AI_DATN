@@ -41,26 +41,124 @@ async function readEvidence(row, filename, type) {
   return fs.readFile(file);
 }
 
+
+
+function formatVietnamTime(value) {
+  if (!value) return 'Chưa xác định';
+
+  if (typeof value === 'string') {
+    const m = value.match(
+      /^(\d{4})-(\d{2})-(\d{2})[ T](\d{2}:\d{2}:\d{2})$/
+    );
+
+    if (m) {
+      return `${m[3]}/${m[2]}/${m[1]} ${m[4]}`;
+    }
+  }
+
+  const date = new Date(value);
+
+  if (Number.isNaN(date.getTime())) {
+    return 'Chưa xác định';
+  }
+
+  const parts = new Intl.DateTimeFormat('en-GB', {
+    timeZone: 'Asia/Ho_Chi_Minh',
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hourCycle: 'h23'
+  }).formatToParts(date);
+
+  const p = Object.fromEntries(
+    parts.map(item => [item.type, item.value])
+  );
+
+  return `${p.day}/${p.month}/${p.year} ${p.hour}:${p.minute}:${p.second}`;
+}
+
+function escapeHtml(value) {
+  return String(value)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+}
+
+function cleanText(value, fallback, max = 120) {
+  const text = String(value ?? '')
+    .replace(/\s+/g, ' ')
+    .trim();
+
+  return escapeHtml((text || fallback).slice(0, max));
+}
+
 function buildMessage(row) {
+  const confidence = Number(row.confidence);
+
+  const score =
+    row.confidence != null && Number.isFinite(confidence)
+      ? `${confidence.toFixed(2)}%`
+      : 'Chưa xác định';
+
+  const reason = cleanText(
+    row.reason,
+    'Không có quyền truy cập',
+    180
+  );
+
+  const isTest = /^\[TEST\]/i.test(
+    String(row.reason || '')
+  );
+
   return [
-    '🚨 SMART GATE AI - CẢNH BÁO PHƯƠNG TIỆN',
+    isTest
+      ? '<b>🧪 SMART GATE AI - KIỂM THỬ</b>'
+      : '<b>🚨 CẢNH BÁO AN NINH</b>',
+
+    '<b>Phương tiện không được phép truy cập</b>',
     '',
-    `Biển số: ${row.plate_number}`,
-    `Thời gian: ${row.created_at}`,
-    `Vị trí: ${row.gate_name || row.gate_id}`,
-    `Hướng: ${row.direction === 'out' ? 'Ra' : 'Vào'}`,
-    'Kết quả: TỪ CHỐI',
-    `Lý do: ${row.reason || 'Không có quyền truy cập'}`,
-    `Độ tin cậy: ${row.confidence ?? 'N/A'}%`,
-    `Mã sự kiện: #${row.id}`
+
+    `🚘 <b>Biển số:</b> ${cleanText(row.plate_number, 'Không rõ', 20)}`,
+    '❌ <b>Kết quả: TỪ CHỐI</b>',
+    `📋 <b>Lý do:</b> ${reason}`,
+    `👤 <b>Chủ xe:</b> ${cleanText(row.owner, 'Chưa xác định', 80)}`,
+    `📍 <b>Vị trí:</b> ${cleanText(row.gate_name, String(row.gate_id), 60)}`,
+    `➡️ <b>Hướng:</b> ${row.direction === 'out' ? 'Ra' : 'Vào'}`,
+    `🎯 <b>Độ tin cậy:</b> ${score}`,
+    '',
+
+    '<b>🕒 THÔNG TIN SỰ KIỆN</b>',
+    `Phát hiện: ${formatVietnamTime(row.created_at)}`,
+    `Gửi lúc: ${formatVietnamTime(new Date())}`,
+    'Múi giờ: GMT+7',
+    `Mã sự kiện: #${escapeHtml(row.id)}`,
+    '',
+
+    isTest
+      ? '<b>🧪 DỮ LIỆU KIỂM THỬ</b>'
+      : '<b>⚠️ YÊU CẦU XỬ LÝ</b>',
+
+    isTest
+      ? 'Dữ liệu giả lập, không phải cảnh báo thật.'
+      : 'Đề nghị bảo vệ kiểm tra phương tiện.',
+
+    '',
+    '<i>🤖 SMART GATE AI • SECURITY</i>'
   ].join('\n');
 }
 
 async function claimNext() {
   const [[row]] = await db.query(`
-    SELECT a.*, g.name AS gate_name
+    SELECT a.*, g.name AS gate_name,
+           COALESCE(e.full_name, vs.full_name) AS owner
     FROM access_logs a
     LEFT JOIN gates g ON g.id = a.gate_id
+    LEFT JOIN vehicles v ON v.id = a.vehicle_id
+    LEFT JOIN employees e ON e.id = v.employee_id
+    LEFT JOIN visitors vs ON vs.id = a.visitor_id
     WHERE a.telegram_status = 'pending'
       AND a.result = 'denied'
       AND a.telegram_attempts < ?
@@ -95,7 +193,6 @@ async function sendAlert(row) {
   let snapshot;
   let plate;
 
-  const message = buildMessage(row);
 
   if (row.image_path && row.plate_image_path) {
     try {
@@ -110,6 +207,8 @@ async function sendAlert(row) {
       console.warn('[telegram] Evidence unavailable:', row.id);
     }
   }
+
+  const message = buildMessage(row);
 
   let result;
 

@@ -24,8 +24,8 @@ async function getConfig() {
     throw new TelegramError('Invalid Telegram token');
   }
 
-  if (!/^-?\d+$/.test(chatId)) {
-    throw new TelegramError('Invalid Telegram chat ID');
+  if (!/^-\d+$/.test(chatId)) {
+    throw new TelegramError('Telegram group chat ID required');
   }
 
   return { token, chatId };
@@ -97,7 +97,8 @@ async function sendMessage(text) {
   return request('sendMessage', chatId =>
     new URLSearchParams({
       chat_id: chatId,
-      text
+      text,
+      parse_mode: 'HTML'
     })
   );
 }
@@ -112,12 +113,12 @@ async function sendEvidence(text, snapshot, plate) {
       {
         type: 'photo',
         media: 'attach://snapshot',
-        caption: text
+        caption: text,
+        parse_mode: 'HTML'
       },
       {
         type: 'photo',
-        media: 'attach://plate',
-        caption: 'Ảnh biển số'
+        media: 'attach://plate'
       }
     ]));
 
