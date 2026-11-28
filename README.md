@@ -111,7 +111,11 @@
 ### 4. Container
 <img width="1920" height="1020" alt="image" src="https://github.com/user-attachments/assets/dc53c134-504f-4b2c-8ed7-043716b28585" />
 
-### 5. 
+### 5. Cơ sở dữ liệu
+<img width="1920" height="1020" alt="image" src="https://github.com/user-attachments/assets/83002a1e-5c84-475e-b6d9-b03dbcddf02b" />
+
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/3e3a5827-afc6-4c60-a9b4-2c280e1af7cd" />
+
 ## ĐỊA CHỈ TRUY CẬP
 
 | Dịch vụ | Địa chỉ |
